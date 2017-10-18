@@ -1,3 +1,4 @@
+"""Example of uploading results"""
 import os
 
 import requests
@@ -19,6 +20,7 @@ def api_post(endpoint, params):
 
 
 def main():
+    # Grab the first schema
     assay_schemas = api_get('/api/v2/assay-schemas')['assaySchemas']
     result_schemas = [schema for schema in assay_schemas if schema['type'] == 'assay_result']
     schema_id = result_schemas[0]['id']
