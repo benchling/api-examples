@@ -81,10 +81,10 @@ def benchmark(api_host, api_key):
     times_total = sorted(times_total)
 
     print('')
-    print('Total: median={} max={}'.format(times_total[NUM_ATTEMPTS / 2 + 1], times_total[-1]))
-    print('Start: median={} max={}'.format(times_start[NUM_ATTEMPTS / 2 + 1], times_start[-1]))
-    print('Upload: median={} max={}'.format(times_upload[NUM_ATTEMPTS / 2 + 1], times_upload[-1]))
-    print('Finish: median={} max={}'.format(times_finish[NUM_ATTEMPTS / 2 + 1], times_finish[-1]))
+    print('Total: median={} max={}'.format(times_total[NUM_ATTEMPTS // 2 + 1], times_total[-1]))
+    print('Start: median={} max={}'.format(times_start[NUM_ATTEMPTS // 2 + 1], times_start[-1]))
+    print('Upload: median={} max={}'.format(times_upload[NUM_ATTEMPTS // 2 + 1], times_upload[-1]))
+    print('Finish: median={} max={}'.format(times_finish[NUM_ATTEMPTS // 2 + 1], times_finish[-1]))
 
 
 if __name__ == '__main__':
