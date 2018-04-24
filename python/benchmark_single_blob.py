@@ -37,10 +37,10 @@ def api_post(api_host, api_key, path, body):
     return json.loads(data)
 
 
-def upload_blob(api_host, api_key):
+def multipart_upload_blob(api_host, api_key):
     print('Starting upload...')
     t0 = time.time()
-    blob_id = api_post(api_host, api_key, '/v2/blobs', {
+    blob_id = api_post(api_host, api_key, '/v2/blobs:start-multipart-upload', {
         'name': random_str(40),
         'type': 'RAW_FILE',
     })['id']
@@ -63,14 +63,30 @@ def upload_blob(api_host, api_key):
     return t1 - t0, t2 - t1, time.time() - t2
 
 
-def benchmark(api_host, api_key):
+def upload_blob(api_host, api_key):
+    print('Starting upload...')
+    contents = os.urandom(BLOB_SIZE)
+    t0 = time.time()
+    api_post(api_host, api_key, '/v2/blobs', {
+        'name': random_str(40),
+        'type': 'RAW_FILE',
+        'data64': base64.b64encode(contents).decode('utf-8'),
+        'md5': hashlib.md5(contents).hexdigest(),
+    })['id']
+    return 0, time.time() - t0, 0
+
+
+def benchmark(api_host, api_key, use_multipart):
     times_start = []
     times_upload = []
     times_finish = []
     times_total = []
     for attempt in range(NUM_ATTEMPTS):
         print('Attempt {}/{}'.format(attempt + 1, NUM_ATTEMPTS))
-        time_start, time_upload, time_finish = upload_blob(api_host, api_key)
+        if use_multipart:
+            time_start, time_upload, time_finish = multipart_upload_blob(api_host, api_key)
+        else:
+            time_start, time_upload, time_finish = upload_blob(api_host, api_key)
         times_start.append(time_start)
         times_upload.append(time_upload)
         times_finish.append(time_finish)
@@ -88,4 +104,5 @@ def benchmark(api_host, api_key):
 
 
 if __name__ == '__main__':
-    benchmark(sys.argv[1], sys.argv[2])
+    use_multipart = not (len(sys.argv) > 3 and sys.argv[3] == '--no-multipart')
+    benchmark(sys.argv[1], sys.argv[2], use_multipart)
